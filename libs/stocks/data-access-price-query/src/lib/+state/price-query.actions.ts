@@ -10,7 +10,7 @@ export enum PriceQueryActionTypes {
 
 export class FetchPriceQuery implements Action {
   readonly type = PriceQueryActionTypes.FetchPriceQuery;
-  constructor(public symbol: string, public period: string) {}
+  constructor(public symbol: string, public period: string, public toDate: Date, public fromDate: Date) {}
 }
 
 export class PriceQueryFetchError implements Action {

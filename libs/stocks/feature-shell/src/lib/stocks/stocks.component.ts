@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { PriceQueryFacade } from '@coding-challenge/stocks/data-access-price-query';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { combineLatest, Subject, concat } from 'rxjs';
@@ -10,7 +10,7 @@ import { combineLatest, Subject, concat } from 'rxjs';
   styleUrls: ['./stocks.component.css']
 })
 export class StocksComponent implements OnInit, OnDestroy {
-  private stockPickerForm: FormGroup;
+  stockPickerForm: FormGroup;
   symbol: string;
   period: string;
   private ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -31,31 +31,62 @@ export class StocksComponent implements OnInit, OnDestroy {
   constructor(private fb: FormBuilder, private priceQuery: PriceQueryFacade) {
     this.stockPickerForm = fb.group({
       symbol: [null, Validators.required],
-      period: [null, Validators.required]
+      toDate: [null, Validators.required],
+      fromDate: [null, Validators.required]
     });
   }
 
   ngOnInit() {
-    combineLatest(
-      this.stockPickerForm.get('symbol').valueChanges.pipe(debounceTime(400)),
-      this.stockPickerForm.get('period').valueChanges
-    ).pipe(takeUntil(this.ngUnsubscribe)).subscribe((formValues: any[]) => {
-      const [symbol, period ] = formValues;
-      this.fetchQuote({symbol,period});
-    })
   }
 
   /**
    * Method to fetch Quote based on passed symbol and period value
-   * @param value 
    */
-  fetchQuote(value) {
+  fetchQuote() {
     if (this.stockPickerForm.valid) {
-      const { symbol, period } = value;
-      this.priceQuery.fetchQuote(symbol, period);
+      const period = this.calculateTimePeriod();
+      const { symbol, toDate, fromDate } = this.stockPickerForm.value;
+      this.priceQuery.fetchQuote(symbol, period , toDate, fromDate );
     }
   }
+
+  /**
+   * Method to calculate time period from to and from Date controls
+   */
+  calculateTimePeriod(): string {
+
+    const { toDate, fromDate } = this.stockPickerForm.value;
+    const yearDiff =toDate.getFullYear() - fromDate.getFullYear();
+    const monthDiff = toDate.getMonth() - fromDate.getMonth();
+
+    let period = '';
+    if (yearDiff > 0) {
+      period = yearDiff + 'y' ;
+    }
+    else if (monthDiff > 0) {
+      period = monthDiff + 'm';
+    }
+    return period; 
+  }
+
+  /**
+   * Method to calculate max value to be fed to Date Controls
+   */
+  calculateMaxValue() {
+    return new Date();
+  }
   
+  /**
+   * Method to validate date range and set default value for to date if invalid
+   */
+  validateRange(toDate: any) {
+    const { fromDate } = this.stockPickerForm.value;
+    if (toDate.value < fromDate) {
+      this.stockPickerForm.controls['toDate'].setValue(fromDate);
+
+    }
+  }
+
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();

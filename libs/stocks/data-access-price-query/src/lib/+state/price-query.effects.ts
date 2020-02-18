@@ -29,7 +29,12 @@ export class PriceQueryEffects {
             }?token=${this.env.apiKey}`
           )
           .pipe(
-            map(resp => new PriceQueryFetched(resp as PriceQueryResponse[]))
+            map(resp => 
+              {
+                const { toDate, fromDate } = action;
+                const filteredResponse = this.filterByDateRange(resp, toDate, fromDate)
+               return new PriceQueryFetched(filteredResponse as PriceQueryResponse[]);
+              })
           );
       },
 
@@ -44,4 +49,11 @@ export class PriceQueryEffects {
     private httpClient: HttpClient,
     private dataPersistence: DataPersistence<PriceQueryPartialState>
   ) {}
+
+   /**
+   * Method to filter out data values based on actual to and from date range
+   */
+  filterByDateRange(response, toDate, fromDate) {
+   return response.filter(stockValues => new Date(stockValues.date) <= toDate && new Date(stockValues.date) >= fromDate)
+  }
 }
