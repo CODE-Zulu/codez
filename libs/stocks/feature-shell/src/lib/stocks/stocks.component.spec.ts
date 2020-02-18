@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { StocksComponent } from './stocks.component';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 describe('StocksComponent', () => {
   let component: StocksComponent;
@@ -20,6 +21,12 @@ describe('StocksComponent', () => {
   });
 
   it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+  it('should call fetch quote', () => {
+    component.stockPickerForm = {valid: true} as FormGroup;
+    const obj = {symbol: 'AAPL', period: '5y'}
+    component.fetchQuote(obj);
     expect(component).toBeTruthy();
   });
 });
