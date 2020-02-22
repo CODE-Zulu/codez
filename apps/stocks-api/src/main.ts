@@ -5,35 +5,25 @@
 import { Server } from 'hapi';
 import axios from 'axios';
 import CacheService from './cache.service';
+import { environment } from './environments/environment'
 
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 
-
 const stocksHandler = async (request, h) => {
-  let data;
-
-  // const key = `stock_${request.params.symbol}_${request.params.period}`;
-
-  // const cachedValue = cache.get(key)
-
-  // if(cachedValue) {
-  //    return cachedValue;
-  // }
-
   try {
+    let data;
 
-    await axios
-      .get(
-        `https://sandbox.iexapis.com/beta/stock/${
+    const key = `stock_${request.params.symbol}_${request.params.period}`;
+
+    data = await cache.get(
+      key,
+      axios.get(
+        `${environment.serverBaseURL}/${
           request.params.symbol
         }/chart/${request.params.period}?token=${request.query.token}`
       )
-      .then(resp => {
-        data = resp && resp.data;
-      })
-      .catch(err => console.log('error=>', err));
-
+    );
     return h.response(data).code(200);
   } catch (err) {
     console.log('err==>', err);
@@ -41,13 +31,15 @@ const stocksHandler = async (request, h) => {
   }
 };
 
-
-
-
 const defaultHandler = (request, h) => {
   return {
     hello: 'world'
   };
+};
+
+const flushCacheHandler = (request, h) => {
+  cache.flush()
+  return 'Successfully Flushed Cache';
 };
 
 const routes = [
@@ -55,6 +47,11 @@ const routes = [
     path: '/stock/{symbol}/chart/{period}',
     method: 'GET',
     handler: stocksHandler
+  },
+  {
+    path: '/flush/cache',
+    method: 'GET',
+    handler: flushCacheHandler
   },
   {
     method: 'GET',
