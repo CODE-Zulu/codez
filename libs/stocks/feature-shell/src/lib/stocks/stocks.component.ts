@@ -44,35 +44,16 @@ export class StocksComponent implements OnInit, OnDestroy {
    */
   fetchQuote() {
     if (this.stockPickerForm.valid) {
-      const period = this.calculateTimePeriod();
+      const period = 'max';
       const { symbol, toDate, fromDate } = this.stockPickerForm.value;
       this.priceQuery.fetchQuote(symbol, period , toDate, fromDate );
     }
   }
-
-  /**
-   * Method to calculate time period from to and from Date controls
-   */
-  calculateTimePeriod(): string {
-
-    const { toDate, fromDate } = this.stockPickerForm.value;
-    const yearDiff =toDate.getFullYear() - fromDate.getFullYear();
-    const monthDiff = toDate.getMonth() - fromDate.getMonth();
-
-    let period = '';
-    if (yearDiff > 0) {
-      period = yearDiff + 'y' ;
-    }
-    else if (monthDiff > 0) {
-      period = monthDiff + 'm';
-    }
-    return period; 
-  }
-
+  
   /**
    * Method to calculate max value to be fed to Date Controls
    */
-  calculateMaxValue() {
+  calculateMaxValueForToDate() {
     return new Date();
   }
   

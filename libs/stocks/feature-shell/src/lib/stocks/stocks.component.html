@@ -16,22 +16,10 @@
       >
     </mat-error>
   </mat-form-field>
-
-  <!-- <mat-form-field>
-    <mat-label>Favorite time period</mat-label>
-    <mat-select formControlName="period">
-      <mat-option
-        *ngFor="let timePeriod of timePeriods"
-        [value]="timePeriod.value"
-      >
-        {{ timePeriod.viewValue }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field> -->
-
+  
   <mat-form-field>
   <mat-label>From:</mat-label>
-  <input matInput [matDatepicker]="FromPicker" [max]="calculateMaxValue" formControlName="fromDate">
+  <input matInput [matDatepicker]="FromPicker" [max]="calculateMaxValueForToDate" formControlName="fromDate">
   <mat-datepicker-toggle matSuffix [for]="FromPicker"></mat-datepicker-toggle>
   <mat-datepicker #FromPicker></mat-datepicker>
   <mat-error
@@ -47,7 +35,7 @@
 
 <mat-form-field>
   <mat-label>To:</mat-label>
-  <input matInput [matDatepicker]="ToPicker" [max]="calculateMaxValue" formControlName="toDate" (dateChange)="validateRange($event)">
+  <input matInput [matDatepicker]="ToPicker" [max]="calculateMaxValueForToDate" formControlName="toDate" (dateChange)="validateRange($event)">
   <mat-datepicker-toggle matSuffix [for]="ToPicker"></mat-datepicker-toggle>
   <mat-datepicker #ToPicker></mat-datepicker>
   <mat-error
