@@ -10,7 +10,7 @@ import { combineLatest, Subject, concat } from 'rxjs';
   styleUrls: ['./stocks.component.css']
 })
 export class StocksComponent implements OnInit, OnDestroy {
-  private stockPickerForm: FormGroup;
+  stockPickerForm: FormGroup;
   symbol: string;
   period: string;
   private ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -50,8 +50,8 @@ export class StocksComponent implements OnInit, OnDestroy {
    * @param value 
    */
   fetchQuote(value) {
-    if (this.stockPickerForm.valid) {
       const { symbol, period } = value;
+      if (symbol.length && period.length) {
       this.priceQuery.fetchQuote(symbol, period);
     }
   }

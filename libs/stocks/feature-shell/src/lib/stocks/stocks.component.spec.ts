@@ -2,14 +2,25 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { StocksComponent } from './stocks.component';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { NO_ERRORS_SCHEMA, DebugElement } from '@angular/core';
+import { PriceQueryFacade } from '@coding-challenge/stocks/data-access-price-query';
+import { Store, StoreModule } from '@ngrx/store';
 
 describe('StocksComponent', () => {
   let component: StocksComponent;
   let fixture: ComponentFixture<StocksComponent>;
+  let debugElement: DebugElement;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ StocksComponent ]
+      imports: [StoreModule.forRoot({})],
+      providers: [
+        FormBuilder,
+        PriceQueryFacade,
+        Store
+      ],
+      declarations: [ StocksComponent ],
+      schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
   }));
@@ -17,6 +28,10 @@ describe('StocksComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(StocksComponent);
     component = fixture.componentInstance;
+    debugElement = fixture.debugElement;
+    const priceQuery = debugElement.injector.get(PriceQueryFacade);
+    const priceFacadeSpy = spyOn(priceQuery, 'fetchQuote');
+
     fixture.detectChanges();
   });
 
@@ -24,9 +39,14 @@ describe('StocksComponent', () => {
     expect(component).toBeTruthy();
   });
   it('should call fetch quote', () => {
-    component.stockPickerForm = {valid: true} as FormGroup;
     const obj = {symbol: 'AAPL', period: '5y'}
     component.fetchQuote(obj);
-    expect(component).toBeTruthy();
+    expect(priceFacadeSpy).toHaveBeenCalled();
+    expect(priceFacadeSpy).toHaveBeenCalledWith('AAPL','5y')
+  });
+  it('should not call fetch quote if symbol is empty', () => {
+    const obj = {symbol: '', period: '5y'}
+    component.fetchQuote(obj);
+    expect(priceFacadeSpy).not.toHaveBeenCalled();
   });
 });
