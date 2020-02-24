@@ -10,7 +10,8 @@ describe('StocksComponent', () => {
   let component: StocksComponent;
   let fixture: ComponentFixture<StocksComponent>;
   let debugElement: DebugElement;
-
+  let priceFacadeSpy
+  
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [StoreModule.forRoot({})],
@@ -30,7 +31,7 @@ describe('StocksComponent', () => {
     component = fixture.componentInstance;
     debugElement = fixture.debugElement;
     const priceQuery = debugElement.injector.get(PriceQueryFacade);
-    const priceFacadeSpy = spyOn(priceQuery, 'fetchQuote');
+    priceFacadeSpy = spyOn(priceQuery, 'fetchQuote');
 
     fixture.detectChanges();
   });
