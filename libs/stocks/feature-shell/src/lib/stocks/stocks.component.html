@@ -1,6 +1,8 @@
 <form [formGroup]="stockPickerForm">
   <mat-form-field>
     <input
+      aria-label="Enter Stock Symbol"
+      tabindex="0"
       matInput
       placeholder="Symbol e.g AAPL"
       formControlName="symbol"
@@ -8,6 +10,7 @@
     />
     <mat-error
       ><span
+      tabindex="0"
         *ngIf="
           !stockPickerForm.get('symbol').valid &&
           stockPickerForm.get('symbol').touched
@@ -18,8 +21,8 @@
   </mat-form-field>
 
   <mat-form-field>
-    <mat-label>Favorite time period</mat-label>
-    <mat-select formControlName="period">
+    <mat-label tabindex="0">Favorite time period</mat-label>
+    <mat-select tabindex="0" formControlName="period">
       <mat-option
         *ngFor="let timePeriod of timePeriods"
         [value]="timePeriod.value"
@@ -29,7 +32,7 @@
     </mat-select>
   </mat-form-field>
 
-  <button (click)="fetchQuote()" mat-raised-button>Go</button>
+  <button tabindex="0" aria-label="Proceed" (click)="fetchQuote()" mat-raised-button>Go</button>
 </form>
 
 <coding-challenge-chart [data$]="quotes$"></coding-challenge-chart>
