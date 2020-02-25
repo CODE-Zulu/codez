@@ -11,7 +11,13 @@ class Cache {
     });
   }
 
-  get(key, storePromise) {
+   /**
+   * Method to check if key is present in cache and return data; else make call and return data
+   * @param key: string
+   * @param storePromise: Promise
+   * @returns data array
+   */
+  get(key: string, storePromise: Promise<any>) {
     const value = this.cache.get(key);
     if (value) {
       return Promise.resolve(value);
@@ -25,7 +31,10 @@ class Cache {
     });
   }
 
-  flush() {
+   /**
+   * Method to flush cache stored in node-cache instance
+   */
+  flush(): void {
     this.cache.flushAll();
   }
 }

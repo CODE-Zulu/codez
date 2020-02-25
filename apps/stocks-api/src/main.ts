@@ -13,18 +13,17 @@ const cache = new CacheService(ttl); // Create a new cache service instance
 const stocksHandler = async (request, h) => {
   try {
     let data;
-
     const key = `stock_${request.params.symbol}_${request.params.period}`;
 
+    // Passing key and promise to our generic cache service
     data = await cache.get(
       key,
-      axios.get(
-        `${environment.serverBaseURL}/${
-          request.params.symbol
-        }/chart/${request.params.period}?token=${request.query.token}`
+      axios.get(`${environment.serverBaseURL}/${request.params.symbol}/chart/${request.params.period}?token=${request.query.token}`
       )
     );
+
     return h.response(data).code(200);
+
   } catch (err) {
     console.log('err==>', err);
     throw new Error(err);
@@ -44,7 +43,7 @@ const flushCacheHandler = (request, h) => {
 
 const routes = [
   {
-    path: '/stock/{symbol}/chart/{period}',
+    path: '/stockName/{symbol}/chartPeriod/{period}',
     method: 'GET',
     handler: stocksHandler
   },
@@ -63,7 +62,10 @@ const routes = [
 const init = async () => {
   const server = new Server({
     port: 3333,
-    host: 'localhost'
+    host: 'localhost',
+    routes: {
+      cors: true
+  }
   });
 
   server.route(routes);
