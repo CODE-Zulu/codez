@@ -55,15 +55,38 @@ describe('StocksComponent', () => {
         stockPickerFormValues.value.fromDate
       );
     });
+    it('should not call service method fetch quote if symbol is empty', () => {
+      const stockPickerFormCopy = JSON.parse(JSON.stringify(stockPickerFormValues));
+      stockPickerFormCopy.value.symbol = '';
+      component.stockPickerForm = stockPickerFormCopy as FormGroup;
+      component.fetchQuote();
+      expect(priceFacadeSpy).not.toHaveBeenCalled();
+    });
+    it('should not call service method fetch quote if toDate is empty', () => {
+      const stockPickerFormCopy = JSON.parse(JSON.stringify(stockPickerFormValues));
+      stockPickerFormCopy.value.toDate = null;
+      component.stockPickerForm = stockPickerFormCopy as FormGroup;
+      component.fetchQuote();
+      expect(priceFacadeSpy).not.toHaveBeenCalled();
+    })
   });
 
   describe('validateRange Method', () => {
-    it('should call valid range method', () => {
+    it('should call validateRange method', () => {
       component.stockPickerForm = stockPickerFormValues as FormGroup;
       const validateRangeSpy = spyOn(component, 'validateRange');
       const toDate = (stockPickerFormValues.value.toDate as unknown) as Date;
       component.validateRange(toDate);
       expect(validateRangeSpy).toHaveBeenCalled();
+    });
+    it('should not call validateRange method', () => {
+      const stockPickerFormCopy = JSON.parse(JSON.stringify(stockPickerFormValues));
+      const date = new Date();
+      stockPickerFormCopy.value.toDate = date.getDate() + 1;
+      stockPickerFormCopy.value.fromDate = date.getDate();
+      const validateRangeSpy = spyOn(component.stockPickerForm.controls.toDate, 'setValue');
+      component.validateRange(stockPickerFormCopy.value.toDate);
+      expect(validateRangeSpy).not.toHaveBeenCalled();      
     });
   });
 

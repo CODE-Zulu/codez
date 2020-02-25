@@ -2,13 +2,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
-  Validators,
-  FormControl
+  Validators
 } from '@angular/forms';
 import { PriceQueryFacade } from '@coding-challenge/stocks/data-access-price-query';
-import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
-import { combineLatest, Subject, concat } from 'rxjs';
-import { MatDatepickerInputEvent, MatDatepickerInput } from '@angular/material';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'coding-challenge-stocks',
@@ -52,7 +49,9 @@ export class StocksComponent implements OnInit, OnDestroy {
     if (this.stockPickerForm.valid) {
       const period = 'max';
       const { symbol, toDate, fromDate } = this.stockPickerForm.value;
+      if (symbol && symbol.length && toDate && toDate.length && fromDate && fromDate.length) {
       this.priceQuery.fetchQuote(symbol, period, toDate, fromDate);
+      }
     }
   }
 
