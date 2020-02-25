@@ -32,7 +32,6 @@ describe('StocksComponent', () => {
     debugElement = fixture.debugElement;
     const priceQuery = debugElement.injector.get(PriceQueryFacade);
     priceFacadeSpy = spyOn(priceQuery, 'fetchQuote');
-
     fixture.detectChanges();
   });
 
@@ -47,6 +46,11 @@ describe('StocksComponent', () => {
   });
   it('should not call fetch quote if symbol is empty', () => {
     const obj = {symbol: '', period: '5y'}
+    component.fetchQuote(obj);
+    expect(priceFacadeSpy).not.toHaveBeenCalled();
+  });
+  it('should not call fetch quote if period is empty', () => {
+    const obj = {symbol: 'AAPL', period: ''}
     component.fetchQuote(obj);
     expect(priceFacadeSpy).not.toHaveBeenCalled();
   });

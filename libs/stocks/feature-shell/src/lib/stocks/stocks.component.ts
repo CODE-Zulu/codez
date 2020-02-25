@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PriceQueryFacade } from '@coding-challenge/stocks/data-access-price-query';
-import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import { combineLatest, Subject, concat } from 'rxjs';
 
 @Component({
@@ -10,9 +10,9 @@ import { combineLatest, Subject, concat } from 'rxjs';
   styleUrls: ['./stocks.component.css']
 })
 export class StocksComponent implements OnInit, OnDestroy {
-  stockPickerForm: FormGroup;
-  symbol: string;
-  period: string;
+  private stockPickerForm: FormGroup;
+  private symbol: string;
+  private period: string;
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
   quotes$ = this.priceQuery.priceQueries$;
@@ -35,11 +35,11 @@ export class StocksComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     combineLatest(
       this.stockPickerForm.get('symbol').valueChanges.pipe(debounceTime(400)),
       this.stockPickerForm.get('period').valueChanges
-    ).pipe(takeUntil(this.ngUnsubscribe)).subscribe((formValues: any[]) => {
+    ).pipe(takeUntil(this.ngUnsubscribe)).subscribe((formValues: string[]) => {
       const [symbol, period ] = formValues;
       this.fetchQuote({symbol,period});
     })
@@ -49,7 +49,7 @@ export class StocksComponent implements OnInit, OnDestroy {
    * Method to fetch Quote based on passed symbol and period value
    * @param value 
    */
-  fetchQuote(value) {
+  fetchQuote(value: FormValue): void {
       const { symbol, period } = value;
       if (symbol.length && period.length) {
       this.priceQuery.fetchQuote(symbol, period);
@@ -60,5 +60,10 @@ export class StocksComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
-
 }
+
+class FormValue {
+  symbol: string;
+  period: string
+}
+
