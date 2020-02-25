@@ -4,5 +4,6 @@
 
 export const environment = {
   production: false,
-  serverBaseURL: 'https://sandbox.iexapis.com/beta/stock'
+  serverBaseURL: 'https://sandbox.iexapis.com/beta/stock',
+  serverKey: 'Tpk_9a33070bb532453497507731ac5d7d96'
 };

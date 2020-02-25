@@ -18,7 +18,7 @@ const stocksHandler = async (request, h) => {
     // Passing key and promise to our generic cache service
     data = await cache.get(
       key,
-      axios.get(`${environment.serverBaseURL}/${request.params.symbol}/chart/${request.params.period}?token=${request.query.token}`
+      axios.get(`${environment.serverBaseURL}/${request.params.symbol}/chart/${request.params.period}?token=${environment.serverKey}`
       )
     );
 
