@@ -13,7 +13,8 @@ export class StocksComponent implements OnInit, OnDestroy {
   private stockPickerForm: FormGroup;
   private symbol: string;
   private period: string;
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
+  private ngUnsubscribe: Subject<void>;
+  private debounceTime: number;
 
   quotes$ = this.priceQuery.priceQueries$;
 
@@ -33,37 +34,44 @@ export class StocksComponent implements OnInit, OnDestroy {
       symbol: [null, Validators.required],
       period: [null, Validators.required]
     });
+    this.ngUnsubscribe = new Subject<void>();
+    this.debounceTime = 400;
   }
 
   ngOnInit(): void {
+    // combineLatest will not emit an initial value until each observable emits at least one value
+    // in this case both value change will be listened
     combineLatest(
-      this.stockPickerForm.get('symbol').valueChanges.pipe(debounceTime(400)),
+      this.stockPickerForm
+        .get('symbol')
+        .valueChanges.pipe(debounceTime(this.debounceTime)),
       this.stockPickerForm.get('period').valueChanges
-    ).pipe(takeUntil(this.ngUnsubscribe)).subscribe((formValues: string[]) => {
-      const [symbol, period ] = formValues;
-      this.fetchQuote({symbol,period});
-    })
+    )
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((formValues: string[]) => {
+        const [symbol, period] = formValues;
+        this.fetchQuote({ symbol, period });
+      });
   }
 
   /**
    * Method to fetch Quote based on passed symbol and period value
-   * @param value 
+   * @param value
    */
-  fetchQuote(value: FormValue): void {
-      const { symbol, period } = value;
-      if (symbol.length && period.length) {
+  public fetchQuote(value: FormValue): void {
+    const { symbol, period } = value;
+    if (symbol.length && period.length) {
       this.priceQuery.fetchQuote(symbol, period);
     }
   }
-  
+
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
 }
 
-class FormValue {
+interface FormValue {
   symbol: string;
-  period: string
+  period: string;
 }
-

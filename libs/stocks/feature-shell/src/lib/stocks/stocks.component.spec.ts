@@ -10,20 +10,15 @@ describe('StocksComponent', () => {
   let component: StocksComponent;
   let fixture: ComponentFixture<StocksComponent>;
   let debugElement: DebugElement;
-  let priceFacadeSpy
-  
+  let priceFacadeSpy;
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [StoreModule.forRoot({})],
-      providers: [
-        FormBuilder,
-        PriceQueryFacade,
-        Store
-      ],
-      declarations: [ StocksComponent ],
+      providers: [FormBuilder, PriceQueryFacade, Store],
+      declarations: [StocksComponent],
       schemas: [NO_ERRORS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -38,20 +33,23 @@ describe('StocksComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-  it('should call fetch quote', () => {
-    const obj = {symbol: 'AAPL', period: '5y'}
-    component.fetchQuote(obj);
-    expect(priceFacadeSpy).toHaveBeenCalled();
-    expect(priceFacadeSpy).toHaveBeenCalledWith('AAPL','5y')
-  });
-  it('should not call fetch quote if symbol is empty', () => {
-    const obj = {symbol: '', period: '5y'}
-    component.fetchQuote(obj);
-    expect(priceFacadeSpy).not.toHaveBeenCalled();
-  });
-  it('should not call fetch quote if period is empty', () => {
-    const obj = {symbol: 'AAPL', period: ''}
-    component.fetchQuote(obj);
-    expect(priceFacadeSpy).not.toHaveBeenCalled();
+
+  describe('fetchQuote Method', () => {
+    it('should call fetch quote', () => {
+      const obj = { symbol: 'AAPL', period: '5y' };
+      component.fetchQuote(obj);
+      expect(priceFacadeSpy).toHaveBeenCalled();
+      expect(priceFacadeSpy).toHaveBeenCalledWith('AAPL', '5y');
+    });
+    it('should not call fetch quote if symbol is empty', () => {
+      const obj = { symbol: '', period: '5y' };
+      component.fetchQuote(obj);
+      expect(priceFacadeSpy).not.toHaveBeenCalled();
+    });
+    it('should not call fetch quote if period is empty', () => {
+      const obj = { symbol: 'AAPL', period: '' };
+      component.fetchQuote(obj);
+      expect(priceFacadeSpy).not.toHaveBeenCalled();
+    });
   });
 });

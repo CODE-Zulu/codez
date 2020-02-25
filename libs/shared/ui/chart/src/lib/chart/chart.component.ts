@@ -1,5 +1,4 @@
 import {
-  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   Input,
@@ -9,7 +8,6 @@ import {
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-
 @Component({
   selector: 'coding-challenge-chart',
   templateUrl: './chart.component.html',
@@ -17,8 +15,8 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class ChartComponent implements OnInit, OnDestroy {
   @Input() data$: Observable<any>;
-  private chartData: any;
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
+  public chartData: any;
+  private ngUnsubscribe: Subject<void>;
 
   chart: {
     title: string;
@@ -27,7 +25,9 @@ export class ChartComponent implements OnInit, OnDestroy {
     columnNames: string[];
     options: any;
   };
-  constructor(private cd: ChangeDetectorRef) {}
+  constructor(private cd: ChangeDetectorRef) {
+    this.ngUnsubscribe = new Subject<void>();
+  }
 
   ngOnInit(): void {
     this.chart = {
@@ -38,8 +38,9 @@ export class ChartComponent implements OnInit, OnDestroy {
       options: { title: `Stock price`, width: '600', height: '400' }
     };
 
-    this.data$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(newData => {
-      return (this.chartData = newData)
+    // Subscribe to observable until component is destroyed and set chartData
+    this.data$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((newData: []) => {
+      return (this.chartData = newData);
     });
   }
 
@@ -47,5 +48,4 @@ export class ChartComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
-
 }
