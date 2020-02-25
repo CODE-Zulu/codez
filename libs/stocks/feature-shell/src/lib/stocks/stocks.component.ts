@@ -1,5 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  FormControl
+} from '@angular/forms';
 import { PriceQueryFacade } from '@coding-challenge/stocks/data-access-price-query';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { combineLatest, Subject, concat } from 'rxjs';
@@ -14,7 +19,7 @@ export class StocksComponent implements OnInit, OnDestroy {
   public stockPickerForm: FormGroup;
   private symbol: string;
   private period: string;
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
+  private ngUnsubscribe: Subject<void>;
 
   quotes$ = this.priceQuery.priceQueries$;
 
@@ -35,36 +40,37 @@ export class StocksComponent implements OnInit, OnDestroy {
       toDate: [null, Validators.required],
       fromDate: [null, Validators.required]
     });
+    this.ngUnsubscribe = new Subject<void>();
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   /**
    * Method to fetch Quote based on passed symbol and period value
    */
-  fetchQuote(): void {
+  public fetchQuote(): void {
     if (this.stockPickerForm.valid) {
       const period = 'max';
       const { symbol, toDate, fromDate } = this.stockPickerForm.value;
-      this.priceQuery.fetchQuote(symbol, period , toDate, fromDate );
+      this.priceQuery.fetchQuote(symbol, period, toDate, fromDate);
     }
   }
-  
+
   /**
-   * Method to calculate max value to be fed to Date Controls
+   * Method to calculate max value as Today to be fed to Date Controls
+   * @returns current date
    */
-  calculateMaxValueForToDate(): Date {
+  public calculateMaxValueForToDate(): Date {
     return new Date();
   }
-  
+
   /**
    * Method to validate date range and set default value for to date if invalid
    * @param toDate
    */
-  validateRange(toDate): void {
+  public validateRange(toDate: Date): void {
     const { fromDate } = this.stockPickerForm.value;
-    if (toDate < fromDate) {
+    if (fromDate && toDate < fromDate) {
       this.stockPickerForm.controls['toDate'].setValue(fromDate);
     }
   }

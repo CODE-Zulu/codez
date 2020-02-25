@@ -19,18 +19,13 @@ describe('StocksComponent', () => {
   let component: StocksComponent;
   let fixture: ComponentFixture<StocksComponent>;
   let debugElement: DebugElement;
-  let priceFacadeSpy
-
+  let priceFacadeSpy;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [StoreModule.forRoot({})],
-      providers: [
-        FormBuilder,
-        PriceQueryFacade,
-        Store
-      ],
-      declarations: [ StocksComponent ],
+      providers: [FormBuilder, PriceQueryFacade, Store],
+      declarations: [StocksComponent],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
   }));
@@ -48,25 +43,39 @@ describe('StocksComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-  it('should call service method fetch quote', () => {
-    component.stockPickerForm = stockPickerFormValues as FormGroup;
-    component.fetchQuote();
-    expect(priceFacadeSpy).toHaveBeenCalled();
-    expect(priceFacadeSpy).toHaveBeenCalledWith('AAPL', 'max', stockPickerFormValues.value.toDate, stockPickerFormValues.value.fromDate )
+  describe('fetchQuote Method', () => {
+    it('should call service method fetch quote', () => {
+      component.stockPickerForm = stockPickerFormValues as FormGroup;
+      component.fetchQuote();
+      expect(priceFacadeSpy).toHaveBeenCalled();
+      expect(priceFacadeSpy).toHaveBeenCalledWith(
+        'AAPL',
+        'max',
+        stockPickerFormValues.value.toDate,
+        stockPickerFormValues.value.fromDate
+      );
+    });
   });
 
-  it('should call valid range method', () => {
-    component.stockPickerForm = stockPickerFormValues as FormGroup;
-    const validateRangeSpy = spyOn(component, 'validateRange');
-    component.validateRange(stockPickerFormValues.value.toDate);
-    expect(validateRangeSpy).toHaveBeenCalled();
+  describe('validateRange Method', () => {
+    it('should call valid range method', () => {
+      component.stockPickerForm = stockPickerFormValues as FormGroup;
+      const validateRangeSpy = spyOn(component, 'validateRange');
+      const toDate = (stockPickerFormValues.value.toDate as unknown) as Date;
+      component.validateRange(toDate);
+      expect(validateRangeSpy).toHaveBeenCalled();
+    });
   });
-  it('should call calculateMaxValueForToDate method', () => {
-    component.stockPickerForm = stockPickerFormValues as FormGroup;
-    const calculateMaxValueForToDateSpy = spyOn(component, 'calculateMaxValueForToDate');
-    component.calculateMaxValueForToDate();
-    expect(calculateMaxValueForToDateSpy).toHaveBeenCalled();
+
+  describe('calculateMaxValueForToDate', () => {
+    it('should call calculateMaxValueForToDate method', () => {
+      component.stockPickerForm = stockPickerFormValues as FormGroup;
+      const calculateMaxValueForToDateSpy = spyOn(
+        component,
+        'calculateMaxValueForToDate'
+      );
+      component.calculateMaxValueForToDate();
+      expect(calculateMaxValueForToDateSpy).toHaveBeenCalled();
+    });
   });
 });
-
-
