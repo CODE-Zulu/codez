@@ -1,0 +1,30 @@
+
+1.	What is done well?
+
+	1.	Project has used ngRx library for state management in order to provide better predictability of change of application state.
+	2.	The project structure involving ngRx is in line with standards specified in ngRx documentation.
+	3.	Nice Separation between component and state machinery as evident from feature-shell folder and data-access-price-query folder.
+	4.	Project hierarchy and arrangements of folders in separate modules. UI chart is kept inside shared and stocks functionality is kept in another folder.
+	5.	Usage of Reactive Forms to gain host of capabilities it offers.
+
+2.	What would you change?
+
+	Based on observation I will change and include below points in the project.
+
+	1.	Model File is not setup defining types, class or Interfaces.
+	2.	There are no access modifier specified for data members of each component. (stock.component.ts line 11,12,13) ,chart.component.ts(16,17)
+	3.	Comments are not provided for the methods.
+	4.	Return type is not indicated for the methods. (for stock.component.ts and chart.component.ts)
+	5.	Unsubscription of subscribed observables is missed which may lead to memory leak.(chart.component.ts line 37)
+
+3.	Are there any code smells or problematic implementations?
+
+	1.	Chart is not rendering due to incorrect ngIf directive value inside Chart.component.ts i.e data instead of chartData. 
+
+	FIXED – Changed ngIf condition and provided null checks using ? for chart values such as chart?.title and chart?.type etc.
+
+	2.	Chart.component.ts has a subscription on ngOnInit which was not unsubscribed on component lifecycle onDestroy method which may lead to memory leak.
+
+	FIXED – Unsubscribed using takeUntil.
+
+Branch:  code-smell-fixes
