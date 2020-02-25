@@ -62,7 +62,7 @@ export class PriceQueryEffects {
    * @param fromDate From Date
    * @returns filtered response
    */
-  filterByDateRange(
+  private filterByDateRange(
     response: PriceQueryResponse[],
     toDate: Date,
     fromDate: Date
