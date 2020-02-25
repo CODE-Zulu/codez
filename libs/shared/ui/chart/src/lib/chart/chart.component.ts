@@ -1,6 +1,4 @@
 import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   Input,
   OnInit,
@@ -26,7 +24,7 @@ export class ChartComponent implements OnInit, OnDestroy {
     columnNames: string[];
     options: any;
   };
-  constructor(private cd: ChangeDetectorRef) {
+  constructor() {
     this.ngUnsubscribe = new Subject<void>();
   }
 

@@ -43,7 +43,7 @@ const flushCacheHandler = (request, h) => {
 
 const routes = [
   {
-    path: '/stockName/{symbol}/chartPeriod/{period}',
+    path: '/beta/stock/{symbol}/chart/{period}',
     method: 'GET',
     handler: stocksHandler
   },
