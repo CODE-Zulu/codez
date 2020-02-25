@@ -17,7 +17,7 @@ class Cache {
    * @param storePromise: Promise
    * @returns data array
    */
-  get(key: string, storePromise: Promise<any>) {
+  public get(key: string, storePromise: Promise<any>) {
     const value = this.cache.get(key);
     if (value) {
       return Promise.resolve(value);
@@ -34,7 +34,7 @@ class Cache {
    /**
    * Method to flush cache stored in node-cache instance
    */
-  flush(): void {
+  public flush(): void {
     this.cache.flushAll();
   }
 }

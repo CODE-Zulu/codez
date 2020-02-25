@@ -13,7 +13,7 @@ export class StocksComponent implements OnInit, OnDestroy {
   stockPickerForm: FormGroup;
   symbol: string;
   period: string;
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
+  private ngUnsubscribe: Subject<void>;
 
   quotes$ = this.priceQuery.priceQueries$;
 
@@ -34,6 +34,7 @@ export class StocksComponent implements OnInit, OnDestroy {
       toDate: [null, Validators.required],
       fromDate: [null, Validators.required]
     });
+    this.ngUnsubscribe = new Subject<void>();
   }
 
   ngOnInit() {
@@ -42,7 +43,7 @@ export class StocksComponent implements OnInit, OnDestroy {
   /**
    * Method to fetch Quote based on passed symbol and period value
    */
-  fetchQuote() {
+  public fetchQuote(): void {
     if (this.stockPickerForm.valid) {
       const period = 'max';
       const { symbol, toDate, fromDate } = this.stockPickerForm.value;
@@ -53,16 +54,17 @@ export class StocksComponent implements OnInit, OnDestroy {
   /**
    * Method to calculate max value to be fed to Date Controls
    */
-  calculateMaxValueForToDate() {
+  public calculateMaxValueForToDate(): Date {
     return new Date();
   }
   
   /**
    * Method to validate date range and set default value for to date if invalid
+   * @param toDate
    */
-  validateRange(toDate: any) {
+  public validateRange(toDate: Date): void{
     const { fromDate } = this.stockPickerForm.value;
-    if (toDate.value < fromDate) {
+    if (fromDate && (toDate < fromDate)) {
       this.stockPickerForm.controls['toDate'].setValue(fromDate);
 
     }
